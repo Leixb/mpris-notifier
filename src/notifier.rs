@@ -137,14 +137,18 @@ impl Notifier {
                 NotificationHintVariant::CaseNotificationImage(album_art),
             );
         }
-        hints.insert(
-            "urgency".to_string(),
-            NotificationHintVariant::Urgency(self.configuration.urgency),
-        );
-        hints.insert(
-            "category".to_string(),
-            NotificationHintVariant::Category(self.configuration.category.clone()),
-        );
+        if let Some(urgency) = self.configuration.urgency {
+            hints.insert(
+                "urgency".to_string(),
+                NotificationHintVariant::Urgency(urgency),
+            );
+        }
+        if let Some(category) = &self.configuration.category {
+            hints.insert(
+                "category".to_string(),
+                NotificationHintVariant::Category(category.clone()),
+            );
+        }
         message.body.push_param(&hints)?; // hints (dict of a{sv})
         message.body.push_param(-1_i32)?; // timeout
 
