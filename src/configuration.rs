@@ -63,6 +63,13 @@ pub struct Configuration {
     ///
     /// Default: [DEFAULT_URGENCY]
     pub urgency: u8,
+
+    /// The category (type) of the notification.
+    /// See https://specifications.freedesktop.org/notification-spec/latest/ar01s06.html
+    /// for standard categories
+    ///
+    /// Default: [DEFAULT_CATEGORY]
+    pub category: String,
 }
 
 const DEFAULT_SUBJECT_FORMAT: &str = "{track}";
@@ -72,6 +79,7 @@ const DEFAULT_ENABLE_ALBUM_ART: bool = true;
 const DEFAULT_ALBUM_ART_DEADLINE: u32 = 1000;
 const DEFAULT_COMMANDS: Option<Vec<Vec<String>>> = None;
 const DEFAULT_URGENCY: u8 = 1; // Normal urgency
+const DEFAULT_CATEGORY: &str = "mpris.player_status";
 
 impl Default for Configuration {
     fn default() -> Self {
@@ -83,6 +91,7 @@ impl Default for Configuration {
             album_art_deadline: DEFAULT_ALBUM_ART_DEADLINE,
             commands: DEFAULT_COMMANDS,
             urgency: DEFAULT_URGENCY,
+            category: DEFAULT_CATEGORY.to_string(),
         }
     }
 }
@@ -146,6 +155,7 @@ mod tests {
                           enable_album_art = true
                           album_art_deadline = 1500
                           urgency = 0
+                          category = 'mpris.changed'
                           commands = [['pkill', '-RTMIN+2', 'waybar'], ['~/script.sh']]"#;
         let expected = Configuration {
             subject_format: "{track}".to_string(),
@@ -162,6 +172,7 @@ mod tests {
                 vec!["~/script.sh".to_string()],
             ]),
             urgency: 0,
+            category: "mpris.changed".to_string(),
         };
         fs::create_dir_all(&*TEST_TEMP_DIR).expect("test setup failed");
         fs::write(&conf_path, conf_data).expect("test setup failed");
