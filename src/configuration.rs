@@ -58,6 +58,11 @@ pub struct Configuration {
     ///
     /// Default: [DEFAULT_COMMANDS]
     pub commands: Option<Vec<Vec<String>>>,
+
+    /// The urgency of the notification: 0 (low), 1 (normal), or 2 (critical).
+    ///
+    /// Default: [DEFAULT_URGENCY]
+    pub urgency: u8,
 }
 
 const DEFAULT_SUBJECT_FORMAT: &str = "{track}";
@@ -66,6 +71,7 @@ const DEFAULT_JOIN_STRING: &str = ", ";
 const DEFAULT_ENABLE_ALBUM_ART: bool = true;
 const DEFAULT_ALBUM_ART_DEADLINE: u32 = 1000;
 const DEFAULT_COMMANDS: Option<Vec<Vec<String>>> = None;
+const DEFAULT_URGENCY: u8 = 1; // Normal urgency
 
 impl Default for Configuration {
     fn default() -> Self {
@@ -76,6 +82,7 @@ impl Default for Configuration {
             enable_album_art: DEFAULT_ENABLE_ALBUM_ART,
             album_art_deadline: DEFAULT_ALBUM_ART_DEADLINE,
             commands: DEFAULT_COMMANDS,
+            urgency: DEFAULT_URGENCY,
         }
     }
 }
@@ -138,6 +145,7 @@ mod tests {
                           join_string = ' ⬥ '
                           enable_album_art = true
                           album_art_deadline = 1500
+                          urgency = 0
                           commands = [['pkill', '-RTMIN+2', 'waybar'], ['~/script.sh']]"#;
         let expected = Configuration {
             subject_format: "{track}".to_string(),
@@ -153,6 +161,7 @@ mod tests {
                 ],
                 vec!["~/script.sh".to_string()],
             ]),
+            urgency: 0,
         };
         fs::create_dir_all(&*TEST_TEMP_DIR).expect("test setup failed");
         fs::write(&conf_path, conf_data).expect("test setup failed");

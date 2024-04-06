@@ -57,7 +57,7 @@ impl Notification {
 }
 
 type NotificationHintMap = HashMap<String, NotificationHintVariant>;
-dbus_variant_sig!(NotificationHintVariant, CaseString => String; CaseNotificationImage => NotificationImage);
+dbus_variant_sig!(NotificationHintVariant, CaseString => String; CaseNotificationImage => NotificationImage; Urgency => u8);
 
 // See: https://specifications.freedesktop.org/notification-spec/notification-spec-latest.html#icons-and-images
 #[derive(Marshal, Unmarshal, Signature, Debug, Eq, PartialEq, Clone)]
@@ -137,6 +137,10 @@ impl Notifier {
                 NotificationHintVariant::CaseNotificationImage(album_art),
             );
         }
+        hints.insert(
+            "urgency".to_string(),
+            NotificationHintVariant::Urgency(self.configuration.urgency),
+        );
         message.body.push_param(&hints)?; // hints (dict of a{sv})
         message.body.push_param(-1_i32)?; // timeout
 
