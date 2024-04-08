@@ -58,6 +58,18 @@ pub struct Configuration {
     ///
     /// Default: [DEFAULT_COMMANDS]
     pub commands: Option<Vec<Vec<String>>>,
+
+    /// The urgency of the notification: 0 (low), 1 (normal), or 2 (critical).
+    ///
+    /// Default: [DEFAULT_URGENCY]
+    pub urgency: Option<u8>,
+
+    /// The category (type) of the notification.
+    /// See https://specifications.freedesktop.org/notification-spec/latest/ar01s06.html
+    /// for standard categories
+    ///
+    /// Default: [DEFAULT_CATEGORY]
+    pub category: Option<String>,
 }
 
 const DEFAULT_SUBJECT_FORMAT: &str = "{track}";
@@ -66,6 +78,8 @@ const DEFAULT_JOIN_STRING: &str = ", ";
 const DEFAULT_ENABLE_ALBUM_ART: bool = true;
 const DEFAULT_ALBUM_ART_DEADLINE: u32 = 1000;
 const DEFAULT_COMMANDS: Option<Vec<Vec<String>>> = None;
+const DEFAULT_URGENCY: Option<u8> = Some(1); // Normal urgency
+const DEFAULT_CATEGORY: Option<String> = None;
 
 impl Default for Configuration {
     fn default() -> Self {
@@ -76,6 +90,8 @@ impl Default for Configuration {
             enable_album_art: DEFAULT_ENABLE_ALBUM_ART,
             album_art_deadline: DEFAULT_ALBUM_ART_DEADLINE,
             commands: DEFAULT_COMMANDS,
+            urgency: DEFAULT_URGENCY,
+            category: DEFAULT_CATEGORY,
         }
     }
 }
@@ -138,6 +154,8 @@ mod tests {
                           join_string = ' ⬥ '
                           enable_album_art = true
                           album_art_deadline = 1500
+                          urgency = 0
+                          category = 'mpris.player_status'
                           commands = [['pkill', '-RTMIN+2', 'waybar'], ['~/script.sh']]"#;
         let expected = Configuration {
             subject_format: "{track}".to_string(),
@@ -153,6 +171,8 @@ mod tests {
                 ],
                 vec!["~/script.sh".to_string()],
             ]),
+            urgency: Some(0),
+            category: Some("mpris.player_status".to_string()),
         };
         fs::create_dir_all(&*TEST_TEMP_DIR).expect("test setup failed");
         fs::write(&conf_path, conf_data).expect("test setup failed");
